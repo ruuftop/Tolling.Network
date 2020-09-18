@@ -79,8 +79,8 @@ var Chaincode = class {
     }
   }
 
-  async setTagValidation(stub,args){
-    console.log('=====started adding Tag Validation record=======');
+  async setTagStatus(stub,args){
+    console.log('=====started setting Tag Status record=======');
     /*
      First argument should contains the header data and second argument should contain the message data.
     */
@@ -89,23 +89,65 @@ var Chaincode = class {
     tag = JSON.parse(tag.toBuffer().toString());
     
     tag['tag_serial_number'] = encrypt(tag['tag_serial_number']);
-    tag['LP_number'] = encrypt(tag['LP_number']);
-    tag['account_id'] = encrypt(tag['account_id']);
-    let date = new Date(tag['date'] + " " + tag['time']);
-    tag['created_at'] = date
-    tag['date'] = new Date(tag['date']);
-    tag['date'] =  tag['date'].toISOString().split("T")[0];
-    tag['LP_country'] = country_lookup[tag['LP_country']];
-    tag['LP_state'] = state_lookup[tag['LP_state']];
-    tag['home_agency_id'] = agency_lookup[tag['home_agency_id']];
-    tag['tag_agency_id'] = agency_lookup[tag['tag_agency_id']];
+    tag['agency_id'] = Number(tag['agency_id'])
+    tag['tag_status'] = status_lookup[tag['tag_status']];
+    let tag_acct_info = tag['tag_acct_info'];
 
 
-    await stub.putPrivateData("tag_status", tag['tag_serial_number'], Buffer.from(JSON.stringify(tag)));
-    await stub.putPrivateData("LP_number", tag['tag_serial_number'], Buffer.from(JSON.stringify(tag)));
+    await stub.putPrivateData("tag_serial_number", tag['tag_serial_number'], Buffer.from(JSON.stringify(tag)));
     
 
-    console.info('============= END : Added Tag Validation record ===========');
+    console.info('============= END : Set Tag Status record ===========');
+  }
+  
+  async tagStatusUpdate(stub,args){
+    console.log('=====started setting Tag Status update=======');
+    /*
+     First argument should contains the header data and second argument should contain the message data.
+    */
+    let transient = stub.getTransient();
+    let tag = transient.get('tag_status');
+    tag = JSON.parse(tag.toBuffer().toString());
+    
+    tag['tag_serial_number'] = encrypt(tag['tag_serial_number']);
+    tag['agency_id'] = Number(tag['agency_id'])
+    tag['tag_status'] = status_lookup[tag['tag_status']];
+    let tag_acct_info = tag['tag_acct_info'];
+    tag['created_at'] = new Date(tag['date'] + " " + tag['time']);
+    tag['date'] = new Date(tag['date']);
+    tag['date'] =  tag['date'].toISOString().split("T")[0];
+
+
+    await stub.putPrivateData("tag_serial_number", tag['tag_serial_number'], Buffer.from(JSON.stringify(tag)));
+    
+
+    console.info('============= END : Set Tag Status record ===========');
+  }
+  
+  async invalidTagCustomer(stub,args){
+    console.log('=====started Invalid Tag Customer update=======');
+    /*
+     First argument should contains the header data and second argument should contain the message data.
+    */
+    let transient = stub.getTransient();
+    let invalid_tag = transient.get('tag_status');
+    invalid_tag = JSON.parse(invalid_tag.toBuffer().toString());
+    
+    invalid_tag['tag_serial_number'] = encrypt(invalid_tag['tag_serial_number']);
+    invalid_tag['agency_id'] = Number(invalid_tag['agency_id'])
+    invalid_tag['tag_status'] = status_lookup[invalid_tag['tag_status']];
+    invalid_tag['cust_last_name'] = encrypt(invalid_tag['cust_last_name']);
+    invalid_tag['cust_first_name'] = encrypt(invalid_tag['cust_first_name']);
+    invalid_tag['cust_company'] = encrypt(invalid_tag['cust_company']);
+    invalid_tag['cust_addr'] = encrypt(invalid_tag['cust_addr']);
+    invalid_tag['cust_state'] = encrypt(invalid_tag['cust_state']);
+    invalid_tag['cust_zip'] = encrypt(invalid_tag['cust_zip']);
+
+
+    await stub.putPrivateData("tag_serial_number", tag['tag_serial_number'], Buffer.from(JSON.stringify(tag)));
+    
+
+    console.info('============= END : Set Tag Status record ===========');
   }
 
   async addTransactionData(stub,args){
@@ -116,13 +158,30 @@ var Chaincode = class {
     let transient = stub.getTransient();
     let transaction_data = transient.get('transaction_data');
     transaction_data = JSON.parse(transaction_data.toBuffer().toString());
-    let transaction_id = encrypt(transaction_data['transaction_id']);
-    transaction_data['LP_number'] = encrypt(transaction_data['LP_number']);
-    transaction_data['tag_status'] = encrypt(transaction_data['tag_status']);
-    transaction_data['tag_serial_number'] = encrypt(transaction_data['tag_serial_number']);
+    let transaction_serial_number = encrypt(transaction_data['transaction_serial_number']);
     transaction_data['created_at'] = new Date(transaction_data['date'] + " " + transaction_data['time']);
     transaction_data['date'] = new Date(transaction_data['date']);
     transaction_data['date'] =  transaction_data['date'].toISOString().split("T")[0];
+    transaction_data['facility_ID'] = facility_lookup[transaction_data['facility_ID']];
+    transaction_data['transaction_type'] = trxtype_lookup[transaction_data['transaction_type']];
+    transaction_data['exit_plaza'] = plaza_lookup[transaction_data['exit_plaza']];
+    transaction_data['entry_plaza'] = plaza_lookup[transaction_data['entry_plaza']];
+    let exit_plaza = transaction_data.exit_plaza.toLowerCase();
+    let entry_plaza = transaction_data.entry_plaza.toLowerCase();
+    transaction_data['tag_agency_id'] = agency_lookup[transaction_data['tag_agency_id']];
+    transaction_data['tag_serial_number'] = Number(transaction_data['tag_serial_number']);
+    transaction_data['read_performance'] = Number(transaction_data['read_performance']);
+    transaction_data['write_performance'] = Number(transaction_data['write_performance']);
+    transaction_data['tag_pgm_status'] = pgm_status_lookup[transaction_data['tag_pgm_status']];
+    transaction_data['lane_mode'] = mode_lookup[transaction_data['lane_mode']];
+    transaction_data['validation_status'] = validation_status_lookup[transaction_data['validation_Status']];
+    transaction_data['LP_state'] = state_lookup[transaction_data['LP_state']];
+    transaction_data['LP_number'] = encrypt(transaction_data['LP_number']);
+    
+    
+    transaction_data['tag_status'] = encrypt(transaction_data['tag_status']);
+    transaction_data['tag_serial_number'] = encrypt(transaction_data['tag_serial_number']);
+    
     
     /*
     transaction_data['record_type'] = record_lookup[transaction_data['record_type']];
