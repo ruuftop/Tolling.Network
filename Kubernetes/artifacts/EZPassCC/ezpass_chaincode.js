@@ -158,6 +158,7 @@ var Chaincode = class {
     let transient = stub.getTransient();
     let transaction_data = transient.get('transaction_data');
     transaction_data = JSON.parse(transaction_data.toBuffer().toString());
+    
     let transaction_serial_number = encrypt(transaction_data['transaction_serial_number']);
     transaction_data['created_at'] = new Date(transaction_data['date'] + " " + transaction_data['time']);
     transaction_data['date'] = new Date(transaction_data['date']);
@@ -177,27 +178,11 @@ var Chaincode = class {
     transaction_data['validation_status'] = validation_status_lookup[transaction_data['validation_Status']];
     transaction_data['LP_state'] = state_lookup[transaction_data['LP_state']];
     transaction_data['LP_number'] = encrypt(transaction_data['LP_number']);
+    transaction_data['class_charged'] = class_lookup[transaction_data['class_charged']];
+    transaction_data['actual_axles'] = Number(transaction_data['actual_axles']);
+    transaction_data['debit_credit'] = dc_lookup[transaction_data['debit_credit']];
+    transaction_data['toll_amount'] = Number(transaction_data['toll_amount']);
     
-    
-    transaction_data['tag_status'] = encrypt(transaction_data['tag_status']);
-    transaction_data['tag_serial_number'] = encrypt(transaction_data['tag_serial_number']);
-    
-    
-    /*
-    transaction_data['record_type'] = record_lookup[transaction_data['record_type']];
-    transaction_data['facility_ID'] = 
-    transaction_data['facility_description'] = 
-    transaction_data['discount'] = Number(transaction_data['discount']);
-    transaction_data['invoice'] = toll_charges['amount'] - toll_charges['discount'];
-    */
-    transaction_data['amount'] = Number(transaction_data['amount'])
-    transaction_data['tag_agency_id'] = agency_lookup[transaction_data['tag_agency_id']];
-    transaction_data['exit_plaza'] = plaza_lookup[transaction_data['exit_plaza']];
-    transaction_data['entry_plaza'] = plaza_lookup[transaction_data['entry_plaza']];
-    let exit_plaza = transaction_data.exit_plaza.toLowerCase();
-    let entry_plaza = transaction_data.entry_plaza.toLowerCase();
-    transaction_data['LP_country'] = country_lookup[transaction_data['LP_country']];
-    transaction_data['LP_state'] = state_lookup[transaction_data['LP_state']];
 
     try {
       let result = await stub.putPrivateData(entry_plaza + "_transaction_data_entry", transaction_id, Buffer.from(JSON.stringify(transaction_data)))
@@ -216,7 +201,7 @@ var Chaincode = class {
     }
     
     try {
-      let result = await stub.putPrivateData("report_transaction", transaction_id, Buffer.from(JSON.stringify(transaction_data)))
+      let result = await stub.putPrivateData("report_transaction", transaction_serial_number, Buffer.from(JSON.stringify(transaction_data)))
       console.info(result.toString());
       console.info("putPrivateData report_transaction");
     } catch (error) {
@@ -226,33 +211,132 @@ var Chaincode = class {
     console.info('============= END : Added Transaction ===========');
   }
   
-  async addAdjustment(stub,args){
-    console.log('=====started adding Adjustment/Correction=======');
+  async transactionRecon(stub,args){
+    console.log('=====started Transaction Reconciliation=======');
     /*
      First argument should contains the header data and second argument should contain the message data.
     */
     let transient = stub.getTransient();
-    let adj_data = transient.get('adj_data');
-    adj_data = JSON.parse(adj_data.toBuffer().toString());
-    adj_data['record_type'] = record_lookup[adj_data['record_type']];
-    /*
-    adj_data['correction_reason'] = correction_lookup[adj_data['correction_reason']];
-    adj_data['resubmit_reason'] = resubmit_lookup[adj_data['resubmit_reason']];
-    */
-    adj_data['correction_count'] = Number(adj_data['correction_count'])++;
-    adj_data['resubmit_count'] = Number(adj_data['resubmit_count'])++;
-    adj_data['from_agency'] = agency_lookup[adj_data['from_agency']];
-    adj_data['to_agency'] = agency_lookup[adj_data['to_agency']];
-    adj_data['created_at'] = new Date(adj_data['date'] + " " + adj_data['time']);
-    adj_data['date'] = new Date(adj_data['date']);
-    adj_data['date'] =  adj_data['date'].toISOString().split("T")[0];
+    let transaction_recon = transient.get('transaction_recon');
+    transaction_recon = JSON.parse(transaction_recon.toBuffer().toString());
+    let transaction_serial_number = encrypt(transaction_recon['transaction_serial_number']);
     
-    adj_data['amount'] = Number(adj_data['amount'])
-    adj_data['tag_agency_id'] = agency_lookup[adj_data['tag_agency_id']];
-    adj_data['exit_plaza'] = plaza_lookup[adj_data['exit_plaza']];
-    adj_data['entry_plaza'] = plaza_lookup[adj_data['entry_plaza']];
+    transaction_recon['post_status'] = post_status_lookup[transaction_recon['post_status']];
+    transaction_recon['post_plan'] = post_plan_lookup[transaction_recon['post_plan']];
+    transaction_recon['debit_credit'] = dc_lookup[transaction_recon['debit_credit']];
+    transaction_recon['owed_amount'] = Number(transaction_recon['owed_amount']);
 
-    await stub.putState("adjustment_submission", adj_data['transaction_id'], Buffer.from(JSON.stringify(ack_data)));
+
+    await stub.putPrivateData("transaction_serial_number", transaction_recon['transaction_serial_number'], Buffer.from(JSON.stringify(transaction_recon)));
+    
+
+    console.info('============= END : Set Transaction reconciliation record ===========');
+  }
+  
+  async correctionFile(stub,args){
+    console.log('=====started Correction=======');
+    /*
+     First argument should contains the header data and second argument should contain the message data.
+    */
+    let transient = stub.getTransient();
+    let correction = transient.get('correction');
+    correction = JSON.parse(correction.toBuffer().toString());
+    let corr_reason = encrypt(correction['corr_reason']);
+    
+    let transaction_serial_number = encrypt(correction['transaction_serial_number']);
+    correction['created_at'] = new Date(correction['date'] + " " + correction['time']);
+    correction['date'] = new Date(correction['date']);
+    correction['date'] =  correction['date'].toISOString().split("T")[0];
+    correction['facility_ID'] = facility_lookup[correction['facility_ID']];
+    correction['transaction_type'] = trxtype_lookup[correction['transaction_type']];
+    correction['exit_plaza'] = plaza_lookup[correction['exit_plaza']];
+    correction['entry_plaza'] = plaza_lookup[correction['entry_plaza']];
+    let exit_plaza = correction.exit_plaza.toLowerCase();
+    let entry_plaza = correction.entry_plaza.toLowerCase();
+    correction['tag_agency_id'] = agency_lookup[correction['tag_agency_id']];
+    correction['tag_serial_number'] = Number(correction['tag_serial_number']);
+    correction['read_performance'] = Number(correction['read_performance']);
+    correction['write_performance'] = Number(correction['write_performance']);
+    correction['tag_pgm_status'] = pgm_status_lookup[correction['tag_pgm_status']];
+    correction['lane_mode'] = mode_lookup[correction['lane_mode']];
+    correction['validation_status'] = validation_status_lookup[correction['validation_Status']];
+    correction['LP_state'] = state_lookup[correction['LP_state']];
+    correction['LP_number'] = encrypt(correction['LP_number']);
+    correction['class_charged'] = class_lookup[correction['class_charged']];
+    correction['actual_axles'] = Number(correction['actual_axles']);
+    correction['debit_credit'] = dc_lookup[correction['debit_credit']];
+    correction['toll_amount'] = Number(correction['toll_amount']);
+    
+
+    try {
+      let result = await stub.putPrivateData(entry_plaza + "_transaction_data_entry", transaction_serial_number, Buffer.from(JSON.stringify(correction)))
+      console.info(result.toString());
+      console.info("putPrivateData Entry");
+    } catch (error) {
+      console.error(error);
+    }
+    
+    try {
+      let result = await stub.putPrivateData(exit_plaza + "_transaction_data_exit", transaction_serial_number, Buffer.from(JSON.stringify(correction)))
+      console.info(result.toString());
+      console.info("putPrivateData Exit");
+    } catch (error) {
+      console.error(error);
+    }
+    
+    try {
+      let result = await stub.putPrivateData("report_transaction", transaction_serial_number, Buffer.from(JSON.stringify(correction)))
+      console.info(result.toString());
+      console.info("putPrivateData report_transaction");
+    } catch (error) {
+      console.error(error);
+    }
+
+
+    await stub.putPrivateData("corr_reason", correction['corr_reason'], Buffer.from(JSON.stringify(correction)));
+    
+
+    console.info('============= END : Set Correction ===========');
+  }
+  
+  async correctionRecon(stub,args){
+    console.log('=====started Correction Reconciliation=======');
+    /*
+     First argument should contains the header data and second argument should contain the message data.
+    */
+    let transient = stub.getTransient();
+    let correction_recon = transient.get('correction_recon');
+    correction_recon = JSON.parse(correction_recon.toBuffer().toString());
+    let transaction_serial_number = encrypt(correction_recon['transaction_serial_number']);
+    
+    correction_recon['post_status'] = post_status_lookup[correction_recon['post_status']];
+    correction_recon['post_plan'] = post_plan_lookup[correction_recon['post_plan']];
+    correction_recon['debit_credit'] = dc_lookup[correction_recon['debit_credit']];
+    correction_recon['owed_amount'] = Number(correction_recon['owed_amount']);
+
+
+    await stub.putPrivateData("transaction_serial_number", correction_recon['transaction_serial_number'], Buffer.from(JSON.stringify(correction_recon)));
+    
+
+    console.info('============= END : Set Correction reconciliation record ===========');
+  }
+  
+  async licensePlateFile(stub,args){
+    console.log('=====started adding License Plate File=======');
+    /*
+     First argument should contains the header data and second argument should contain the message data.
+    */
+    let transient = stub.getTransient();
+    let license_plate = transient.get('license_plate');
+    license_plate = JSON.parse(license_plate.toBuffer().toString());
+    
+    license_plate['license_state'] = state_lookup[license_plate['license_state']];
+    license_plate['license_number'] = encrypt(license_plate['license_number']);
+    license_plate['license_type'] = LP_type_lookup[license_plate['license_type']];
+    license_plate['tag_agency_id'] = agency_lookup[license_plate['tag_agency_id']];
+    license_plate['tag_serial_number'] = Number(license_plate['tag_serial_number']);
+
+    await stub.putState("license_number", license_plate['license_number'], Buffer.from(JSON.stringify(license_plate)));
 
     console.info('============= END : Added Adjustment/Correction ===========');
   }
