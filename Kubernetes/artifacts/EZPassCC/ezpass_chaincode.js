@@ -185,7 +185,7 @@ var Chaincode = class {
     
 
     try {
-      let result = await stub.putPrivateData(entry_plaza + "_transaction_data_entry", transaction_id, Buffer.from(JSON.stringify(transaction_data)))
+      let result = await stub.putPrivateData(entry_plaza + "_transaction_data_entry", transaction_serial_number, Buffer.from(JSON.stringify(transaction_data)))
       console.info(result.toString());
       console.info("putPrivateData Entry");
     } catch (error) {
@@ -193,7 +193,7 @@ var Chaincode = class {
     }
     
     try {
-      let result = await stub.putPrivateData(exit_plaza + "_transaction_data_exit", transaction_id, Buffer.from(JSON.stringify(transaction_data)))
+      let result = await stub.putPrivateData(exit_plaza + "_transaction_data_exit", transaction_serial_number, Buffer.from(JSON.stringify(transaction_data)))
       console.info(result.toString());
       console.info("putPrivateData Exit");
     } catch (error) {
@@ -341,34 +341,173 @@ var Chaincode = class {
     console.info('============= END : Added Adjustment/Correction ===========');
   }
 
-  async addTransactionReconciliation(stub,args){
-    console.log('=====started adding Reconciliation=======');
+  async addNTReconciliation(stub,args){
+    console.log('=====started adding Non-Toll Reconciliation=======');
     /*
      First argument should contains the header data and second argument should contain the message data.
     */
     let transient = stub.getTransient();
-    let recon_transaction_data = transient.get('recon_transaction_data');
-    recon_transaction_data = JSON.parse(recon_transaction_data.toBuffer().toString());
-    recon_transaction_data['transaction_id'] = encrypt(recon_transaction_data['transaction_id']);
-    recon_transaction_data['agency_reference_id'] = encrypt(recon_transaction_data['agency_reference_id']);
-    recon_transaction_data['adjustment_count'] = Number(recon_transaction_data['adjustment_count'])++;
-    recon_transaction_data['resubmit_count'] = Number(recon_transaction_data['resubmit_count'])++;
-    recon_transaction_data['recon_home_agency_ID'] = agency_lookup[recon_transaction_data['recon_home_agency_ID']];
-    recon_transaction_data['posting_disposition'] = disposition_lookup[recon_transaction_data['posting_disposition']];
-    recon_transaction_data['amount'] = Number(recon_transaction_data['amount'])
+    let nt_recon = transient.get('nt_recon');
+    nt_recon = JSON.parse(nt_recon.toBuffer().toString());
+    let transaction_serial_number = encrypt(nt_recon['transaction_serial_number']);
     
-    /* recon_transaction_data['created_at'] = new Date(recon_transaction_data['date'] + " " + recon_transaction_data['time']);
-    recon_transaction_data['date'] = new Date(recon_transaction_data['date']);
-    recon_transaction_data['date'] = recon_transaction_data['date'].toISOString().split("T")[0];
+    nt_recon['post_status'] = post_status_lookup[nt_recon['post_status']];
+    nt_recon['post_plan'] = post_plan_lookup[nt_recon['post_plan']];
+    nt_recon['debit_credit'] = dc_lookup[nt_recon['debit_credit']];
+    nt_recon['owed_amount'] = Number(nt_recon['owed_amount']);
+
+
+    await stub.putPrivateData("transaction_serial_number", nt_recon['transaction_serial_number'], Buffer.from(JSON.stringify(nt_recon)));
+
+    console.info('============= END : Added Non-Toll Reconciliation ===========');
+  }
+  
+  async addNTTransactionData(stub,args){
+    console.log('=====started adding Non-Toll Transaction=======');
+    /*
+     First argument should contains the header data and second argument should contain the message data.
     */
+    let transient = stub.getTransient();
+    let nt_transaction_data = transient.get('nt_transaction_data');
+    nt_transaction_data = JSON.parse(nt_transaction_data.toBuffer().toString());
+    
+    let transaction_serial_number = encrypt(nt_transaction_data['transaction_serial_number']);
+    nt_transaction_data['created_at'] = new Date(nt_transaction_data['date'] + " " + nt_transaction_data['time']);
+    nt_transaction_data['date'] = new Date(nt_transaction_data['date']);
+    nt_transaction_data['date'] =  nt_transaction_data['date'].toISOString().split("T")[0];
+    nt_transaction_data['facility_agency'] = facility_lookup[nt_transaction_data['facility_agency']];
+    nt_transaction_data['transaction_type'] = trxtype_lookup[nt_transaction_data['transaction_type']];
+    nt_transaction_data['exit_plaza'] = plaza_lookup[nt_transaction_data['exit_plaza']];
+    nt_transaction_data['entry_plaza'] = plaza_lookup[nt_transaction_data['entry_plaza']];
+    let exit_plaza = nt_transaction_data.exit_plaza.toLowerCase();
+    let entry_plaza = nt_transaction_data.entry_plaza.toLowerCase();
+    nt_transaction_data['tag_agency_id'] = agency_lookup[nt_transaction_data['tag_agency_id']];
+    nt_transaction_data['tag_serial_number'] = Number(nt_transaction_data['tag_serial_number']);
+    nt_transaction_data['read_performance'] = Number(nt_transaction_data['read_performance']);
+    nt_transaction_data['write_performance'] = Number(nt_transaction_data['write_performance']);
+    nt_transaction_data['tag_pgm_status'] = pgm_status_lookup[nt_transaction_data['tag_pgm_status']];
+    nt_transaction_data['lane_mode'] = mode_lookup[nt_transaction_data['lane_mode']];
+    nt_transaction_data['validation_status'] = validation_status_lookup[nt_transaction_data['validation_Status']];
+    nt_transaction_data['LP_state'] = state_lookup[nt_transaction_data['LP_state']];
+    nt_transaction_data['LP_number'] = encrypt(nt_transaction_data['LP_number']);
+    nt_transaction_data['class_charged'] = class_lookup[nt_transaction_data['class_charged']];
+    nt_transaction_data['actual_axles'] = Number(nt_transaction_data['actual_axles']);
+    nt_transaction_data['debit_credit'] = dc_lookup[nt_transaction_data['debit_credit']];
+    nt_transaction_data['toll_amount'] = Number(nt_transaction_data['toll_amount']);
+    
 
-    await stub.putState(key, Buffer.from(JSON.stringify(recon_transaction_data)));
+    try {
+      let result = await stub.putPrivateData(entry_plaza + "_transaction_data_entry", transaction_serial_number, Buffer.from(JSON.stringify(nt_transaction_data)))
+      console.info(result.toString());
+      console.info("putPrivateData Entry");
+    } catch (error) {
+      console.error(error);
+    }
+    
+    try {
+      let result = await stub.putPrivateData(exit_plaza + "_transaction_data_exit", transaction_serial_number, Buffer.from(JSON.stringify(nt_transaction_data)))
+      console.info(result.toString());
+      console.info("putPrivateData Exit");
+    } catch (error) {
+      console.error(error);
+    }
+    
+    try {
+      let result = await stub.putPrivateData("report_transaction", transaction_serial_number, Buffer.from(JSON.stringify(nt_transaction_data)))
+      console.info(result.toString());
+      console.info("putPrivateData report_transaction");
+    } catch (error) {
+      console.error(error);
+    }
 
-    console.info('============= END : Added Reconciliation ===========');
+    console.info('============= END : Added Non-Toll Transaction ===========');
+  }
+  
+  async addNTCorrectionFile(stub,args){
+    console.log('=====started adding Non-Toll Correction=======');
+    /*
+     First argument should contains the header data and second argument should contain the message data.
+    */
+    let transient = stub.getTransient();
+    let nt_corr = transient.get('nt_corr');
+    nt_corr = JSON.parse(nt_corr.toBuffer().toString());
+    let nt_corr_reason = encrypt(nt_corr['nt_corr_reason']);
+    
+    let transaction_serial_number = encrypt(nt_corr['transaction_serial_number']);
+    nt_corr['created_at'] = new Date(nt_corr['date'] + " " + nt_corr['time']);
+    nt_corr['date'] = new Date(nt_corr['date']);
+    nt_corr['date'] =  nt_corr['date'].toISOString().split("T")[0];
+    nt_corr['facility_agency'] = facility_lookup[nt_corr['facility_agency']];
+    nt_corr['transaction_type'] = trxtype_lookup[nt_corr['transaction_type']];
+    nt_corr['exit_plaza'] = plaza_lookup[nt_corr['exit_plaza']];
+    nt_corr['entry_plaza'] = plaza_lookup[nt_corr['entry_plaza']];
+    let exit_plaza = nt_corr.exit_plaza.toLowerCase();
+    let entry_plaza = nt_corr.entry_plaza.toLowerCase();
+    nt_corr['tag_agency_id'] = agency_lookup[nt_corr['tag_agency_id']];
+    nt_corr['tag_serial_number'] = Number(nt_corr['tag_serial_number']);
+    nt_corr['read_performance'] = Number(nt_corr['read_performance']);
+    nt_corr['write_performance'] = Number(nt_corr['write_performance']);
+    nt_corr['tag_pgm_status'] = pgm_status_lookup[nt_corr['tag_pgm_status']];
+    nt_corr['lane_mode'] = mode_lookup[nt_corr['lane_mode']];
+    nt_corr['validation_status'] = validation_status_lookup[nt_corr['validation_Status']];
+    nt_corr['LP_state'] = state_lookup[nt_corr['LP_state']];
+    nt_corr['LP_number'] = encrypt(nt_corr['LP_number']);
+    nt_corr['class_charged'] = class_lookup[nt_corr['class_charged']];
+    nt_corr['actual_axles'] = Number(nt_corr['actual_axles']);
+    nt_corr['debit_credit'] = dc_lookup[nt_corr['debit_credit']];
+    nt_corr['toll_amount'] = Number(nt_corr['toll_amount']);
+    
+
+    try {
+      let result = await stub.putPrivateData(entry_plaza + "_transaction_data_entry", transaction_serial_number, Buffer.from(JSON.stringify(nt_corr)))
+      console.info(result.toString());
+      console.info("putPrivateData Entry");
+    } catch (error) {
+      console.error(error);
+    }
+    
+    try {
+      let result = await stub.putPrivateData(exit_plaza + "_transaction_data_exit", transaction_serial_number, Buffer.from(JSON.stringify(nt_corr)))
+      console.info(result.toString());
+      console.info("putPrivateData Exit");
+    } catch (error) {
+      console.error(error);
+    }
+    
+    try {
+      let result = await stub.putPrivateData("report_transaction", transaction_serial_number, Buffer.from(JSON.stringify(nt_corr)))
+      console.info(result.toString());
+      console.info("putPrivateData report_transaction");
+    } catch (error) {
+      console.error(error);
+    }
+
+    console.info('============= END : Added Non-Toll Correction ===========');
+  }
+  
+  async addNTCorrReconciliation(stub,args){
+    console.log('=====started adding Non-Toll Correction Reconciliation=======');
+    /*
+     First argument should contains the header data and second argument should contain the message data.
+    */
+    let transient = stub.getTransient();
+    let nt_corr_recon = transient.get('nt_corr_recon');
+    nt_corr_recon = JSON.parse(nt_corr_recon.toBuffer().toString());
+    let transaction_serial_number = encrypt(nt_corr_recon['transaction_serial_number']);
+    
+    nt_corr_recon['post_status'] = post_status_lookup[nt_corr_recon['post_status']];
+    nt_corr_recon['post_plan'] = post_plan_lookup[nt_corr_recon['post_plan']];
+    nt_corr_recon['debit_credit'] = dc_lookup[nt_corr_recon['debit_credit']];
+    nt_corr_recon['owed_amount'] = Number(nt_corr_recon['owed_amount']);
+
+
+    await stub.putPrivateData("transaction_serial_number", nt_corr_recon['transaction_serial_number'], Buffer.from(JSON.stringify(nt_corr_recon)));
+
+    console.info('============= END : Added Non-Toll Correction Reconciliation ===========');
   }
 
   async addAcknowledgement(stub,args){
-    console.log('=====started adding Tag Validation data=======');
+    console.log('=====started adding Acknowledgement=======');
     /*
      First argument should contains the header data and second argument should contain the message data.
     */
