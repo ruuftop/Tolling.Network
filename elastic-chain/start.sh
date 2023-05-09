@@ -69,9 +69,9 @@ docker exec cli peer channel create -o orderer.ruuftop.com:7050 \
             -c ${CHANNEL_NAME} \
             -f /etc/hyperledger/configtx/channel.tx
             
-node -v
-npm install -g node@8.4.0
-node -v
+docker exec cli apt-get update && apt-get install -y curl
+docker exec cli apt-get update && apt-get install -y nodejs
+docker exec cli apt-get install -y npm
 
 TCAEnv=("peer0.tca.com:7051" "TCA" \
   "/opt/gopath/src/github.com/hyperledger/fabric/peer/crypto/peerOrganizations/tca.com/users/Admin@tca.com/msp" \
