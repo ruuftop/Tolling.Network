@@ -70,7 +70,8 @@ docker exec cli peer channel create -o orderer.ruuftop.com:7050 \
             -f /etc/hyperledger/configtx/channel.tx
             
 docker exec cli apt-get update && apt-get install -y curl
-docker exec cli apt-get update && apt-get install nodejs=8.4.0-1chl1~precise1
+docker exec cli curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.37.2/install.sh | bash
+docker exec cli nvm install 8.4.0
 docker exec cli apt-get install -y npm
 
 TCAEnv=("peer0.tca.com:7051" "TCA" \
