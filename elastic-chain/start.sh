@@ -65,6 +65,8 @@ sleep 10
 
 # # Create the channel
 
+docker pull hyperledger/fabric-ccenv:1.4.7
+docker image tag hyperledger/fabric-ccenv:1.4.7 hyperledger/fabric-ccenv:latest
 
 docker exec cli peer channel create -o orderer.ruuftop.com:7050 \
             -c ${CHANNEL_NAME} \
