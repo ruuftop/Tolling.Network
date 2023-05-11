@@ -18,25 +18,19 @@ docker build . -t elk
 cd ../
 
 function joinChannel() {
-  docker exec cli node -v
   docker exec -e "CORE_PEER_ADDRESS=$1" \
             -e "CORE_PEER_LOCALMSPID=$2" \
             -e "CORE_PEER_MSPCONFIGPATH=$3" \
             cli peer channel join -b ${CHANNEL_NAME}.block
-            
-  docker exec cli node -v
 
   docker exec -e "CORE_PEER_ADDRESS=$1" \
               -e "CORE_PEER_LOCALMSPID=$2" \
               -e "CORE_PEER_MSPCONFIGPATH=$3" \
               cli peer channel update -o orderer.ruuftop.com:7050 \
               -c $CHANNEL_NAME -f $4
-              
-  docker exec cli node -v
 }
 
 function installCC() {
-  docker exec cli node -v
   docker exec \
     -e "CORE_PEER_ADDRESS=$1" \
     -e "CORE_PEER_LOCALMSPID=$2" \
@@ -47,7 +41,6 @@ function installCC() {
     -l node \
     -p /opt/gopath/src/github.com/CTOCchaincode/
     
-  docker exec cli node -v
 }
 
 function queryTest() {
