@@ -77,7 +77,7 @@ docker exec cli peer channel create -o orderer.ruuftop.com:7050 \
             -c ${CHANNEL_NAME} \
             -f /etc/hyperledger/configtx/channel.tx
             
-docker exec -it cli bash
+# # docker exec -it cli bash
 # # docker exec cli apt-get update && apt-get install -y curl
 # # docker exec cli curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.37.2/install.sh | bash
 # # docker exec cli nvm install 8.4.0
