@@ -14,7 +14,8 @@ docker-compose -f docker-compose.yml stop
 docker-compose -f docker-compose.yml kill && docker-compose -f docker-compose.yml down
 
 # remove chaincode docker images
-docker rm $(docker ps -aq)
-docker rmi $(docker images dev-* -q)
+
+docker rmi -f $(docker images -a)
+docker rm -f $(docker ps -a)
 
 # Your system is now clean
