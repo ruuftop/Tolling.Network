@@ -116,6 +116,8 @@ docker exec cli peer chaincode instantiate \
   -n ctoc_cc -l node -v 1.0 -c '{"Args":["init"]}' \
   -P "AND ('TCA.member', 'BATA.member', 'SANDAG.member')" \
   --collections-config  /opt/gopath/src/github.com/CTOCchaincode/collections_config.json
+  --tls true \
+  --cafile /etc/hyperledger/configtx/tlsca.ruuftop.com-cert.pem
 sleep 5 
 
 bash data_generation/generate_data.sh
