@@ -11,7 +11,7 @@ networks:
 services:
   orderer.ruuftop.com:
     container_name: orderer.ruuftop.com
-    image: hyperledger/fabric-orderer
+    image: hyperledger/fabric-orderer:1.4.11
     environment:
       - FABRIC_LOGGING_SPEC=INFO
       - ORDERER_GENERAL_LISTENADDRESS=0.0.0.0
@@ -198,7 +198,7 @@ services:
 
   cli:
     container_name: cli
-    image: hyperledger/fabric-tools
+    image: hyperledger/fabric-tools:1.4.11
     tty: true
     environment:
       - GOPATH=/opt/gopath
