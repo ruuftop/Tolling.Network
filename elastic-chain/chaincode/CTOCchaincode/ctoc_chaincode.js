@@ -73,9 +73,13 @@ var Chaincode = class {
     console.info('============= END : adding toll charges record ===========');
     console.log("Toll Charges");
     let transient = stub.getTransient();
+    console.info('========== SHOW: Transient ==========');
     console.info(transient);
     let toll_charges = transient.get('toll_charges');
+    console.info('========== SHOW: Toll Charges ==========');
     console.info(toll_charges);
+    console.info('========== SHOW: Toll Charges to String ==========');
+    console.log(toll_charges.toString());
     toll_charges = JSON.parse(toll_charges.toString());
     let tag_id = encrypt(toll_charges['tag_id']);
     toll_charges['created_at'] = new Date(toll_charges['date'] + " " + toll_charges['time']);
