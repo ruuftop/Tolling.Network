@@ -2,17 +2,17 @@ import json
 import random
 import sys
 import uuid
-import time
+import time as timelibrary
 from datetime import datetime
 
 def randomDAte(start, end):
     frmt = '%d-%m-%Y %H:%M:%S'
 
-    stime = time.mktime(time.strptime(start, frmt))
-    etime = time.mktime(time.strptime(end, frmt))
+    stime = timelibrary.mktime(timelibrary.strptime(start, frmt))
+    etime = timelibrary.mktime(timelibrary.strptime(end, frmt))
 
     ptime = stime + random.random() * (etime - stime)
-    dt = datetime.fromtimestamp(time.mktime(time.localtime(ptime)))
+    dt = datetime.fromtimestamp(timelibrary.mktime(timelibrary.localtime(ptime)))
     return dt
 
 agencies = ['tc', 'at', 'sd']
