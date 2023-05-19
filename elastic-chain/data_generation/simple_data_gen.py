@@ -1,10 +1,20 @@
 import json
 import random
 import sys
-from faker import Faker
 import uuid
+import time
+from datetime import datetime
 
-fake = Faker()
+def randomDAte(start, end):
+    frmt = '%d-%m-%Y %H:%M:%S'
+
+    stime = time.mktime(time.strptime(start, frmt))
+    etime = time.mktime(time.strptime(end, frmt))
+
+    ptime = stime + random.random() * (etime - stime)
+    dt = datetime.fromtimestamp(time.mktime(time.localtime(ptime)))
+    return dt
+
 agencies = ['tc', 'at', 'sd']
 statuses = ['paid', 'unpaid']
 tag_status = ['non_revenue', 'valid', 'invalid']
@@ -31,7 +41,7 @@ for i in range(1, n_els // 3):
     source = random.choice(agencies)
     sts = random.choice(tag_status)
     t = random.choice(tag_types)
-    date = fake.date_time_between(start_date=start_date, end_date=end_date)
+    date = randomDate(start_date, end_date)
     time = date.strftime('%H:%M:%S')
     date = date.strftime('%m/%d/%Y')
     last_change = 'update'
@@ -68,7 +78,7 @@ for i in range(1, n_els):
     source, destination = random.sample(agencies, 2)
     sts = random.choice(statuses)
     amount = random.uniform(10, 45)
-    date = fake.date_time_between(start_date=start_date, end_date=end_date)
+    date = randomDate(start_date, end_date)
     time = date.strftime('%H:%M:%S')
     date = date.strftime('%m/%d/%Y')
     t = random.choice(tag_types)
