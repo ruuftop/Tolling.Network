@@ -73,12 +73,12 @@ var Chaincode = class {
     console.info('============= END : adding toll charges record ===========');
     console.log("Toll Charges");
     let transient = stub.getTransient();
-    console.info('========== SHOW: Transient ==========');
+    console.log('========== SHOW: Transient ==========');
     console.info(transient);
     let toll_charges = transient.get('toll_charges');
-    console.info('========== SHOW: Toll Charges ==========');
+    console.log('========== SHOW: Toll Charges ==========');
     console.info(toll_charges);
-    console.info('========== SHOW: Toll Charges to String ==========');
+    console.log('========== SHOW: Toll Charges to String ==========');
     console.log(toll_charges.toString());
     toll_charges = JSON.parse(toll_charges.toString());
     let tag_id = encrypt(toll_charges['tag_id']);
@@ -144,12 +144,12 @@ var Chaincode = class {
     console.info('============= END : adding Tag status record ===========');
     console.log("Tag Status")
     let transient = stub.getTransient();
-    console.info('========== SHOW: Transient ==========');
+    console.log('========== SHOW: Transient ==========');
     console.log(transient);
     let tag = transient.get('tag_status');
-    console.info('========== SHOW: Tag ==========');
+    console.log('========== SHOW: Tag ==========');
     console.log(tag);
-    console.info('========== SHOW: Tag String ==========');
+    console.log('========== SHOW: Tag String ==========');
     console.log(tag.toString());
     tag = JSON.parse(tag.toString());
 
