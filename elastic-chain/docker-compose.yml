@@ -20,8 +20,8 @@ services:
       - ORDERER_GENERAL_GENESISFILE=/etc/hyperledger/configtx/genesis.block
       - ORDERER_GENERAL_LOCALMSPID=OrdererMSP
       - ORDERER_GENERAL_LOCALMSPDIR=/etc/hyperledger/msp/orderer/msp
-      - CORE_CHAINCODE_DEPLOYTIMEOUT=300s
-      - CORE_CHAINCODE_STARTUPTIMEOUT=300s
+      - CORE_CHAINCODE_DEPLOYTIMEOUT=600s
+      - CORE_CHAINCODE_STARTUPTIMEOUT=600s
     working_dir: /opt/gopath/src/github.com/hyperledger/fabric/orderer
     command: orderer
     ports:
@@ -46,8 +46,8 @@ services:
       - CORE_PEER_ADDRESS=peer0.tca.com:7051
       - CORE_PEER_ID=peer0.tca.com
       - CORE_PEER_LOCALMSPID=TCA
-      - CORE_CHAINCODE_DEPLOYTIMEOUT=300s
-      - CORE_CHAINCODE_STARTUPTIMEOUT=300s
+      - CORE_CHAINCODE_DEPLOYTIMEOUT=600s
+      - CORE_CHAINCODE_STARTUPTIMEOUT=600s
       - CORE_PEER_CHAINCODELISTENADDRESS=peer0.tca.com:7053
     volumes:
         - /var/run/:/host/var/run/
@@ -87,8 +87,8 @@ services:
       - CORE_PEER_ADDRESS=peer0.sandag.com:7051
       - CORE_PEER_ID=peer0.sandag.com
       - CORE_PEER_LOCALMSPID=SANDAG
-      - CORE_CHAINCODE_DEPLOYTIMEOUT=300s
-      - CORE_CHAINCODE_STARTUPTIMEOUT=300s
+      - CORE_CHAINCODE_DEPLOYTIMEOUT=600s
+      - CORE_CHAINCODE_STARTUPTIMEOUT=600s
     volumes:
         - /var/run/:/host/var/run/
         - ./crypto-config/peerOrganizations/sandag.com/peers/peer0.sandag.com/msp:/etc/hyperledger/msp/peer
@@ -127,8 +127,8 @@ services:
       - CORE_PEER_ADDRESS=peer0.bata.com:7051
       - CORE_PEER_ID=peer0.bata.com
       - CORE_PEER_LOCALMSPID=BATA
-      - CORE_CHAINCODE_DEPLOYTIMEOUT=300s
-      - CORE_CHAINCODE_STARTUPTIMEOUT=300s
+      - CORE_CHAINCODE_DEPLOYTIMEOUT=600s
+      - CORE_CHAINCODE_STARTUPTIMEOUT=600s
     volumes:
         - /var/run/:/host/var/run/
         - ./crypto-config/peerOrganizations/bata.com/peers/peer0.bata.com/msp:/etc/hyperledger/msp/peer
@@ -167,8 +167,8 @@ services:
       - CORE_PEER_ADDRESS=peer0.report.com:7051
       - CORE_PEER_ID=peer0.report.com
       - CORE_PEER_LOCALMSPID=REPORT
-      - CORE_CHAINCODE_DEPLOYTIMEOUT=300s
-      - CORE_CHAINCODE_STARTUPTIMEOUT=300s
+      - CORE_CHAINCODE_DEPLOYTIMEOUT=600s
+      - CORE_CHAINCODE_STARTUPTIMEOUT=600s
       - CORE_PEER_CHAINCODELISTENADDRESS=peer0.report.com:7053
     volumes:
         - /var/run/:/host/var/run/
@@ -210,8 +210,8 @@ services:
       - CORE_PEER_MSPCONFIGPATH=/opt/gopath/src/github.com/hyperledger/fabric/peer/crypto/peerOrganizations/tca.com/users/Admin@tca.com/msp
       - CORE_CHAINCODE_KEEPALIVE=50
       - CHANNEL_NAME=${CHANNEL_NAME}
-      - CORE_CHAINCODE_DEPLOYTIMEOUT=300s
-      - CORE_CHAINCODE_STARTUPTIMEOUT=300s
+      - CORE_CHAINCODE_DEPLOYTIMEOUT=600s
+      - CORE_CHAINCODE_STARTUPTIMEOUT=600s
       - CORE_PEER_CHAINCODELISTENADDRESS=peer0.tca.com:7053
     working_dir: /opt/gopath/src/github.com/hyperledger/fabric/peer
     command: /bin/bash
