@@ -80,7 +80,7 @@ var Chaincode = class {
     console.info(toll_charges);
     console.info('========== SHOW: Toll Charges to String ==========');
     console.log(toll_charges.toString());
-    sleep 5
+    await new Promise(resolve => setTimeout(resolve, 5000));
     toll_charges = JSON.parse(toll_charges.toString());
     let tag_id = encrypt(toll_charges['tag_id']);
     toll_charges['created_at'] = new Date(toll_charges['date'] + " " + toll_charges['time']);
@@ -152,7 +152,7 @@ var Chaincode = class {
     console.log(tag);
     console.info('========== SHOW: Tag String ==========');
     console.log(tag.toString());
-    sleep 5
+    await new Promise(resolve => setTimeout(resolve, 5000));
     tag = JSON.parse(tag.toString());
 
     tag['tag_id'] = encrypt(tag['tag_id']);
