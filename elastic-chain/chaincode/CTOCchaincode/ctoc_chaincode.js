@@ -140,9 +140,13 @@ var Chaincode = class {
     console.info('============= END : adding Tag status record ===========');
     console.log("Tag Status")
     let transient = stub.getTransient();
+    console.info('========== SHOW: Transient ==========');
     console.log(transient);
     let tag = transient.get('tag_status');
+    console.info('========== SHOW: Tag ==========');
     console.log(tag);
+    console.info('========== SHOW: Tag String ==========');
+    console.log(tag.toString());
     tag = JSON.parse(tag.toString());
 
     tag['tag_id'] = encrypt(tag['tag_id']);
