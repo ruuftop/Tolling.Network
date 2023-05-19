@@ -79,9 +79,9 @@ var Chaincode = class {
     console.info('========== SHOW: Toll Charges ==========');
     console.info(toll_charges);
     console.info('========== SHOW: Toll Charges to String ==========');
-    console.log(toll_charges.toString());
-    await new Promise(resolve => setTimeout(resolve, 30000));
-    toll_charges = JSON.parse(toll_charges.toString());
+    let byteBufferString = toll_charges.readIString();
+    console.log(byteBufferString);
+    toll_charges = JSON.parse(byteBufferString);
     let tag_id = encrypt(toll_charges['tag_id']);
     toll_charges['created_at'] = new Date(toll_charges['date'] + " " + toll_charges['time']);
     toll_charges['date'] = new Date(toll_charges['date']);
@@ -151,9 +151,9 @@ var Chaincode = class {
     console.info('========== SHOW: Tag ==========');
     console.log(tag);
     console.info('========== SHOW: Tag String ==========');
-    console.log(tag.toString());
-    await new Promise(resolve => setTimeout(resolve, 30000));
-    tag = JSON.parse(tag.toString());
+    let byteBufferString = tag.readIString();
+    console.log(byteBufferString);
+    tag = JSON.parse(byteBufferString);
 
     tag['tag_id'] = encrypt(tag['tag_id']);
     tag['account_id'] = encrypt(tag['account_id']);
