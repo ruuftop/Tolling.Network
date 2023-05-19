@@ -5,7 +5,7 @@ import uuid
 import time as timelibrary
 from datetime import datetime
 
-def randomDAte(start, end):
+def randomDate(start, end):
     frmt = '%d-%m-%Y %H:%M:%S'
 
     stime = timelibrary.mktime(timelibrary.strptime(start, frmt))
