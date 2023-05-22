@@ -141,7 +141,7 @@ var Chaincode = class {
 
   async setTagStatus(stub,args) {
     console.info('============= START : adding Tag status record ===========');
-    console.log("Tag Status")
+    console.log("Tag Status");
     let transient = stub.getTransient();
     console.info('========== SHOW: Transient ==========');
     console.log(transient);
