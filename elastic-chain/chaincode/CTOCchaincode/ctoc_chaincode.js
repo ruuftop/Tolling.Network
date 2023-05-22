@@ -70,7 +70,7 @@ var Chaincode = class {
   }
 
   async addTollCharges(stub, args){
-    console.info('============= END : adding toll charges record ===========');
+    console.info('============= START : adding toll charges record ===========');
     console.log("Toll Charges");
     let transient = stub.getTransient();
     console.info('========== SHOW: Transient ==========');
@@ -121,7 +121,7 @@ var Chaincode = class {
   }
 
   async addReconTollCharges(stub,args){
-    console.info('============= END : adding Reconciled Toll charges record ===========');
+    console.info('============= START : adding Reconciled Toll charges record ===========');
 
     let transient = stub.getTransient();
     let recon_toll_charges = transient.get('recon_toll_charges');
@@ -140,7 +140,7 @@ var Chaincode = class {
   }
 
   async setTagStatus(stub,args) {
-    console.info('============= END : adding Tag status record ===========');
+    console.info('============= START : adding Tag status record ===========');
     console.log("Tag Status")
     let transient = stub.getTransient();
     console.info('========== SHOW: Transient ==========');
@@ -168,7 +168,7 @@ var Chaincode = class {
   }
 
   async addPaybyPlate(stub,args) {
-    console.info('============= END : adding  pay by plate record ===========');
+    console.info('============= START : adding  pay by plate record ===========');
 
     let transient = stub.getTransient();
     let pay_by_plate = transient.get('pay_by_plate');
@@ -213,7 +213,7 @@ var Chaincode = class {
   }
 
   async addReconPaybyPlate(stub,args) {
-   console.info('============= END : adding  recon pay by plate recon record ===========');
+   console.info('============= START : adding  recon pay by plate recon record ===========');
 
     let transient = stub.getTransient();
     let recon_pay_by_plate = transient.get('recon_pay_by_plate');
@@ -262,7 +262,7 @@ var Chaincode = class {
 
 
   async addLicensePlateStatus(stub,args) {
-    console.info('============= END : adding license plate status record ===========');
+    console.info('============= START : adding license plate status record ===========');
 
     let transient = stub.getTransient();
     let license_plate_status = transient.get('license_plate_status');
