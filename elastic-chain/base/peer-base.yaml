@@ -7,7 +7,7 @@ version: '2'
 
 services:
   peer-base:
-    image: hyperledger/fabric-peer:1.4.4
+    image: hyperledger/fabric-peer:1.4.11
     environment:
       - PEER=peer0
       - CORE_VM_ENDPOINT=unix:///host/var/run/docker.sock
