@@ -93,6 +93,8 @@ SANDAGEnv=("peer0.sandag.com:7051" "SANDAG" \
 REPORTEnv=("peer0.report.com:7051" "REPORT" \
   "/opt/gopath/src/github.com/hyperledger/fabric/peer/crypto/peerOrganizations/report.com/users/Admin@report.com/msp" \
   "/etc/hyperledger/configtx/REPORTanchors.tx")
+  
+sleep 10
 
 joinChannel "${TCAEnv[@]}"
 
