@@ -199,3 +199,14 @@ Profiles:
                 - *REPORT
             Capabilities:
                 <<: *ApplicationCapabilities
+                
+    ctocprivatechannel:
+        Consortium: CTOC
+        Application:
+            <<: *ApplicationDefaults
+            Organizations:
+                - *TCA
+                - *BATA
+                - *REPORT
+            Capabilities:
+                <<: *ApplicationCapabilities
