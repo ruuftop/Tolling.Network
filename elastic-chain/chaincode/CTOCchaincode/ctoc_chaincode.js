@@ -56,6 +56,7 @@ var Chaincode = class {
     let source = "TCA";
     let result = await stub.getPrivateData(source.toLowerCase() + "_toll_charges_source", tag_id);
     console.info(result);
+    console.info(result.toString('utf8'));
 
     return result;
   }
@@ -65,6 +66,7 @@ var Chaincode = class {
     let source = "BATA";
     let result = await stub.getPrivateData(source.toLowerCase() + "_toll_charges_destination", tag_id);
     console.info(result);
+    console.info(result.toString('utf8'));
 
     return result;
   }
