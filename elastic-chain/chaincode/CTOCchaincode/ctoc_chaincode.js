@@ -58,7 +58,7 @@ var Chaincode = class {
     console.info(result);
     console.info(result.toString('utf8'));
 
-    return result;
+    return result.toString('utf8');
   }
 
   async queryTollPrivateCharges(stub, args) {
@@ -68,7 +68,7 @@ var Chaincode = class {
     console.info(result);
     console.info(result.toString('utf8'));
 
-    return result;
+    return result.toString('utf8');
   }
 
   async addTollCharges(stub, args){
