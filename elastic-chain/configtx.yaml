@@ -195,6 +195,7 @@ Profiles:
             Organizations:
                 - *TCA
                 - *BATA
+                - *SANDAG
                 - *REPORT
             Capabilities:
                 <<: *ApplicationCapabilities
