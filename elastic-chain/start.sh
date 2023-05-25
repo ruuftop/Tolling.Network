@@ -88,9 +88,9 @@ docker exec cli peer channel create -o orderer.ruuftop.com:7050 \
             -f /etc/hyperledger/configtx/channel.tx
             
 
-docker exec cli peer channel create -o orderer.ruuftop.com:7050 \
-            -c ${PRIVATE_CHANNEL_NAME} \
-            -f /etc/hyperledger/configtx/privatechannel.tx
+# # docker exec cli peer channel create -o orderer.ruuftop.com:7050 \
+# #             -c ${PRIVATE_CHANNEL_NAME} \
+# #             -f /etc/hyperledger/configtx/privatechannel.tx
             
 # # docker exec -it cli bash
 # # docker exec cli apt-get update && apt-get install -y curl
@@ -120,21 +120,11 @@ joinChannel "${TCAEnv[@]}"
 
 joinChannel "${BATAEnv[@]}"
 
-joinChannel "${SANDAGEnv[@]}"
-
 joinChannel "${REPORTEnv[@]}"
-
-joinPrivateChannel "${TCAEnv[@]}"
-
-joinPrivateChannel "${BATAEnv[@]}"
-
-joinPrivateChannel "${REPORTEnv[@]}"
 
 installCC "${TCAEnv[@]}"
 
 installCC "${BATAEnv[@]}"
-
-installCC "${SANDAGEnv[@]}"
 
 installCC "${REPORTEnv[@]}"
 
