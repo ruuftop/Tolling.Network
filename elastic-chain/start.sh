@@ -120,11 +120,15 @@ joinChannel "${TCAEnv[@]}"
 
 joinChannel "${BATAEnv[@]}"
 
+joinChannel "${SANDAGEnv[@]}"
+
 joinChannel "${REPORTEnv[@]}"
 
 installCC "${TCAEnv[@]}"
 
 installCC "${BATAEnv[@]}"
+
+installCC "${SANDAGEnv[@]}"
 
 installCC "${REPORTEnv[@]}"
 
