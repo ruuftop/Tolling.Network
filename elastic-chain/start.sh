@@ -11,6 +11,7 @@ set -ev
 export MSYS_NO_PATHCONV=1
 export CHANNEL_NAME=ctocchannel
 export COMPOSE_PROJECT_NAME=ctocproject
+export PRIVATE_CHANNEL_NAME=ctocprivatechannel
 #docker-compose -f docker-compose.yml down
 
 cd elk
@@ -28,6 +29,20 @@ function joinChannel() {
               -e "CORE_PEER_MSPCONFIGPATH=$3" \
               cli peer channel update -o orderer.ruuftop.com:7050 \
               -c $CHANNEL_NAME -f $4
+}
+
+
+function joinPrivateChannel() {
+  docker exec -e "CORE_PEER_ADDRESS=$1" \
+            -e "CORE_PEER_LOCALMSPID=$2" \
+            -e "CORE_PEER_MSPCONFIGPATH=$3" \
+            cli peer channel join -b ${PRIVATE_CHANNEL_NAME}.block
+
+  docker exec -e "CORE_PEER_ADDRESS=$1" \
+              -e "CORE_PEER_LOCALMSPID=$2" \
+              -e "CORE_PEER_MSPCONFIGPATH=$3" \
+              cli peer channel update -o orderer.ruuftop.com:7050 \
+              -c $PRIVATE_CHANNEL_NAME -f $4
 }
 
 function installCC() {
@@ -72,6 +87,11 @@ docker exec cli peer channel create -o orderer.ruuftop.com:7050 \
             -c ${CHANNEL_NAME} \
             -f /etc/hyperledger/configtx/channel.tx
             
+
+docker exec cli peer channel create -o orderer.ruuftop.com:7050 \
+            -c ${PRIVATE_CHANNEL_NAME} \
+            -f /etc/hyperledger/configtx/privatechannel.tx
+            
 # # docker exec -it cli bash
 # # docker exec cli apt-get update && apt-get install -y curl
 # # docker exec cli curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.37.2/install.sh | bash
@@ -103,6 +123,12 @@ joinChannel "${BATAEnv[@]}"
 joinChannel "${SANDAGEnv[@]}"
 
 joinChannel "${REPORTEnv[@]}"
+
+joinPrivateChannel "${TCAEnv[@]}"
+
+joinPrivateChannel "${BATAEnv[@]}"
+
+joinPrivateChannel "${REPORTEnv[@]}"
 
 installCC "${TCAEnv[@]}"
 
