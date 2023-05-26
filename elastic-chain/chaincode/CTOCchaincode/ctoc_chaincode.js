@@ -55,20 +55,22 @@ var Chaincode = class {
     let tag_id = encrypt(args[0]);
     let source = "TCA";
     let result = await stub.getPrivateData(source.toLowerCase() + "_toll_charges_source", tag_id);
+    let resultString = result.toString('utf8');
     console.info(result);
-    console.info(result.toString('utf8'));
+    console.info(resultString);
 
-    return result.toString('utf8');
+    return resultString;
   }
 
   async queryTollPrivateCharges(stub, args) {
     let tag_id = encrypt(args[0]);
     let source = "BATA";
     let result = await stub.getPrivateData(source.toLowerCase() + "_toll_charges_destination", tag_id);
+    let resultString = result.toString('utf8');
     console.info(result);
-    console.info(result.toString('utf8'));
+    console.info(resultString);
 
-    return result.toString('utf8');
+    return resultString;
   }
 
   async addTollCharges(stub, args){
