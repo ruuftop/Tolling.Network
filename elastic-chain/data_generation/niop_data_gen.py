@@ -15,7 +15,7 @@ def randomDate(start, end):
     dt = datetime.fromtimestamp(timelibrary.mktime(timelibrary.localtime(ptime)))
     return dt
 
-agencies = ['tc', 'at', 'sd']
+agencies = ['0038', '0040', '0041']
 statuses = ['paid', 'unpaid']
 tag_status = ['non_revenue', 'valid', 'invalid']
 last_changes = ['create', 'update']
